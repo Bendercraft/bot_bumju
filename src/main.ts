@@ -25,7 +25,7 @@ process.on('SIGTERM', async () =>
 
     await bot.onServerExit();
 
-    ALL_LOGGER.info('Disbcord client destroyed');
+    ALL_LOGGER.info('Discord client destroyed');
 
     process.exit();
 });

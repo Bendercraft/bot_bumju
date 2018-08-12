@@ -49,10 +49,17 @@ export class MergedChannel
     public async handlePlayerLeave(member: Discord.GuildMember) {
         if (this.textChannel != null)
         {
-            let permissions = this.textChannel.permissionOverwrites.get(member.id);
-            if (permissions != null)
+            try
             {
-                await permissions.delete();
+                let permissions = this.textChannel.permissionOverwrites.get(member.id);
+                if (permissions != null)
+                {
+                    await permissions.delete();
+                }
+            }
+            catch (exception)
+            {
+                ERROR_LOGGER.error(exception);
             }
         }
     }
@@ -61,7 +68,14 @@ export class MergedChannel
     {
         if (this.textChannel != null)
         {
-            await this.textChannel.delete();
+            try
+            {
+                await this.textChannel.delete();
+            }
+            catch (exception)
+            {
+                ERROR_LOGGER.error(exception);
+            }
         }
     }
 }

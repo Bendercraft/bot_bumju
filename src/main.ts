@@ -19,5 +19,16 @@ process.on('SIGINT', async () =>
     process.exit();
 });
 
+process.on('SIGTERM', async () =>
+{
+    ALL_LOGGER.info('SIGTERM received');
+
+    await bot.onServerExit();
+
+    ALL_LOGGER.info('Disbcord client destroyed');
+
+    process.exit();
+});
+
 
 bot.run(BOT_TOKEN);

@@ -1,0 +1,12 @@
+{
+    "appenders": {
+        "out": { "type": "stdout"},
+        "errors": { "type": "file", "filename": "./logs/errors.log" },
+        "general": { "type": "file", "filename": "./logs/all.log", "maxLogSize": 1048576, "backups": 10 }
+    },
+    "categories": {
+        "out": { "appenders":["out"], "level": "debug" },
+        "error": { "appenders": ["errors"], "level": "error" },
+        "default" : { "appenders": ["general"], "level": "info" }
+    }
+}

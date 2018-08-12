@@ -1,0 +1,29 @@
+{
+  "name": "bot-bumju",
+  "version": "1.0.0",
+  "description": "Bot that permits to merge voice and text channels",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Discord",
+    "bot",
+    "bumju",
+    "voice",
+    "channel",
+    "text",
+    "merge"
+  ],
+  "author": "Nokorbis",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@types/node": "^10.5.8",
+    "bufferutil": "^4.0.0",
+    "discord.js": "^11.4.0",
+    "erlpack": "github:discordapp/erlpack",
+    "log4js": "^3.0.4",
+    "node-opus": "^0.3.0",
+    "zlib-sync": "^0.1.4"
+  }
+}

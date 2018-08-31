@@ -6,7 +6,7 @@ const BOT_TOKEN: string = require('../settings.json').token;
 Log4js.configure('./log_config.json');
 const ALL_LOGGER = Log4js.getLogger('default');
 
-const bot: BumjuBot = new BumjuBot();
+const bot: BumjuBot = new BumjuBot(BOT_TOKEN);
 
 process.on('SIGINT', async () =>
 {
@@ -31,4 +31,4 @@ process.on('SIGTERM', async () =>
 });
 
 
-bot.run(BOT_TOKEN);
+bot.run();

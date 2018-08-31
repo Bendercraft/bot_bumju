@@ -33,7 +33,7 @@ export class BumjuBot
     {
         LOGGER_ALL.info('The websocket got disconnected');
         LOGGER_ERROR.error(event);
-        this.login();
+        this.client.destroy().then(this.client.login.bind(this.client));
     }
 
     public onVoiceChannelUpdate = (oldMember: Discord.GuildMember, newMember: Discord.GuildMember) =>

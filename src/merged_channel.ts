@@ -26,15 +26,23 @@ export class MergedChannel
         const guild = this.voiceChannel.guild;
         if (this.voiceChannel != null)
         {
-            this.textChannel = (await guild.createChannel(`TEXT-${this.voiceChannel.name.replace(/'/g, '-')}`, 'text',
-            [
-                {
-                    id: guild.id, //everyone role
-                    deny: 
-                        Discord.Permissions.ALL
-                }
-            ])) as TextChannel;
-           await this.textChannel.setParent(this.voiceChannel.parent);
+            try
+            {
+                this.textChannel = (await guild.createChannel(`TEXT-${this.voiceChannel.name.replace(/'/g, '-')}`, 'text',
+                [
+                    {
+                        id: guild.id, //everyone role
+                        deny: 
+                            Discord.Permissions.ALL
+                    }
+                ])) as TextChannel;
+               await this.textChannel.setParent(this.voiceChannel.parent);
+            }
+            catch (e)
+            {
+                ERROR_LOGGER.error('An error occured while creating associated channel');
+                ERROR_LOGGER.error(e);
+            }
         }
     }
 
@@ -42,7 +50,15 @@ export class MergedChannel
     {
         if (this.textChannel != null)
         {
-            await this.textChannel.overwritePermissions(member, CHANNEL_PERMISSIONS_IN, 'BUMJU');
+            try
+            {
+                await this.textChannel.overwritePermissions(member, CHANNEL_PERMISSIONS_IN, 'BUMJU');
+            }
+            catch (e)
+            {
+                ERROR_LOGGER.error('An error occured while handling player join');
+                ERROR_LOGGER.error(e);
+            }
         }
     }
 
@@ -59,6 +75,7 @@ export class MergedChannel
             }
             catch (exception)
             {
+                ERROR_LOGGER.error('An error occured while handling player leave');
                 ERROR_LOGGER.error(exception);
             }
         }
@@ -74,6 +91,7 @@ export class MergedChannel
             }
             catch (exception)
             {
+                ERROR_LOGGER.error('An error occured while deleting associated channel');
                 ERROR_LOGGER.error(exception);
             }
         }

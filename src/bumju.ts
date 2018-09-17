@@ -21,6 +21,7 @@ export class BumjuBot
         this.client.on('ready', this.onReady);
         this.client.on('disconnect', this.onDisconnect);
         this.client.on('voiceStateUpdate', this.onVoiceChannelUpdate);
+        this.client.on('message', this.onMessage);
     }
 
     public onReady =  () => 

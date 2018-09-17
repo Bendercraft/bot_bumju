@@ -63,6 +63,28 @@ export class BumjuBot
                 }
                 
             }
+            else if (message.content === 'b!debug')
+            {
+                try
+                {
+                    if (message.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR))
+                    {
+                        let response = 'I do know about the following channels: \n'; 
+                        response += this.controller.getDebugMessage();
+                        await message.channel.send(response)
+                    }
+                    else 
+                    {
+                        await message.member.send('Vous n\'avez pas la permission d\'exécuter cette commande.');
+                    }
+                    if (message.deletable) { await message.delete(); }
+                }
+                catch (e) 
+                {
+                    LOGGER_ALL.warn('An exception occured while trying to debug channels');
+                    LOGGER_ERROR.error(e);
+                }
+            }
         }
     }
 

@@ -63,4 +63,16 @@ export class ChannelsController
         }
         this.mergedChannels.clear();
     }
+
+    public getDebugMessage() : string
+    {
+        let message : string = '';
+
+        for (let [key, channel] of this.mergedChannels)
+        {
+            message += '- ' + channel.voiceChannel.name + '\n';
+        }
+
+        return message;
+    }
 }

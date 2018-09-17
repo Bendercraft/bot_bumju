@@ -36,6 +36,35 @@ export class BumjuBot
         this.client.destroy().then(this.client.login.bind(this.client));
     }
 
+    public onMessage = async (message: Discord.Message) =>
+    {
+        if (message.channel.type === 'text') 
+        {
+            if (message.content === 'b!reset') 
+            {
+                try
+                {
+                    if (message.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR))
+                    {
+                        await this.controller.clearAllChannels();
+                        await message.channel.send('Channels deleted'); 
+                    }
+                    else 
+                    {
+                        await message.member.send('Vous n\'avez pas la permission d\'exécuter cette commande.');
+                    }
+                    if (message.deletable) { await message.delete(); }
+                }
+                catch (e) 
+                {
+                    LOGGER_ALL.warn('An exception occured while trying to reset channels');
+                    LOGGER_ERROR.error(e);
+                }
+                
+            }
+        }
+    }
+
     public onVoiceChannelUpdate = (oldMember: Discord.GuildMember, newMember: Discord.GuildMember) =>
     {
         if (newMember.voiceChannel == null)

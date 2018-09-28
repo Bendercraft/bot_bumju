@@ -20,6 +20,7 @@ export class ChannelsController
     {
         let vChannel = member.voiceChannel;
         let mergedChannel = this.mergedChannels.get(vChannel.id);
+        OUT_LOGGER.info(`${member.displayName} left channel : ${vChannel.name} for merged : ${mergedChannel == null ? null : mergedChannel.textChannel.name }`);
         if (mergedChannel != null)
         {
             await mergedChannel.handlePlayerLeave(member);
@@ -30,6 +31,7 @@ export class ChannelsController
     {
         let vChannel = member.voiceChannel;
         let mergedChannel = this.mergedChannels.get(vChannel.id);
+        OUT_LOGGER.info(`${member.displayName} joined channel : ${vChannel.name} for merged : ${mergedChannel == null ? null : mergedChannel.textChannel.name }`);
         if (mergedChannel == null) 
         {
             mergedChannel = await this.createNewMergedChannel(vChannel);
@@ -39,12 +41,14 @@ export class ChannelsController
 
     public async handlePlayerSwitchChannel(oldMember: Discord.GuildMember, newMember: Discord.GuildMember)
     {
+        OUT_LOGGER.info(`${oldMember.displayName} switched`);
         await this.handlePlayerLeaveChannel(oldMember);
         await this.handlePlayerJoinChannel(newMember);
     }
 
     private async createNewMergedChannel(voiceChannel: Discord.VoiceChannel)
     {
+        OUT_LOGGER.info(`Creating new merged channel for ${voiceChannel.name}`);
         let mergedChannel = new MergedChannel();
 
         mergedChannel.voiceChannel = voiceChannel;

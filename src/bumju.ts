@@ -19,15 +19,35 @@ export class BumjuBot
         this.controller = new ChannelsController();
 
         this.client.on('ready', this.onReady);
+        this.client.on('error', this.onWebsocketError);
+        this.client.on('rateLimit', this.onRateLimitReached);
+        this.client.on('warn', this.onWarning);
         this.client.on('disconnect', this.onDisconnect);
         this.client.on('voiceStateUpdate', this.onVoiceChannelUpdate);
         this.client.on('message', this.onMessage);
     }
 
-    public onReady =  () => 
+    public onReady = () => 
     {
         LOGGER_ALL.info(`Logged in as ${this.client.user.tag}`);
         this.client.user.setActivity('Avatar Horizon');
+    }
+
+    public onWebsocketError = (error: Error) => 
+    {
+        LOGGER_ALL.info('A websocket error occured');
+        LOGGER_ERROR.error(error);
+    }
+
+    public onRateLimitReached = (rateLimitInfo: any) =>
+    {
+        LOGGER_ALL.info('Rate limmit reached');
+        LOGGER_ERROR.error(rateLimitInfo);
+    }
+
+    public onWarning = (warning: string) => 
+    {
+        LOGGER_ALL.warn(warning);
     }
 
     public onDisconnect = (event: CloseEvent) => 
@@ -37,53 +57,62 @@ export class BumjuBot
         this.client.destroy().then(this.client.login.bind(this.client));
     }
 
+    public async executeResetCommand(message: Discord.Message) 
+    {
+        try
+        {
+            if (message.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR))
+            {
+                await this.controller.clearAllChannels();
+                await message.channel.send('Channels deleted'); 
+            }
+            else 
+            {
+                await message.member.send('Vous n\'avez pas la permission d\'exécuter cette commande.');
+            }
+            if (message.deletable) { await message.delete(); }
+        }
+        catch (e) 
+        {
+            LOGGER_ALL.warn('An exception occured while trying to reset channels');
+            LOGGER_ERROR.error(e);
+        }
+    }
+
+    public async executeDebugCommand(message: Discord.Message)
+    {
+        try
+        {
+            if (message.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR))
+            {
+                let response = 'I do know about the following channels: \n'; 
+                response += this.controller.getDebugMessage();
+                await message.channel.send(response)
+            }
+            else 
+            {
+                await message.member.send('Vous n\'avez pas la permission d\'exécuter cette commande.');
+            }
+            if (message.deletable) { await message.delete(); }
+        }
+        catch (e) 
+        {
+            LOGGER_ALL.warn('An exception occured while trying to debug channels');
+            LOGGER_ERROR.error(e);
+        }
+    }
+
     public onMessage = async (message: Discord.Message) =>
     {
         if (message.channel.type === 'text') 
         {
             if (message.content === 'b!reset') 
             {
-                try
-                {
-                    if (message.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR))
-                    {
-                        await this.controller.clearAllChannels();
-                        await message.channel.send('Channels deleted'); 
-                    }
-                    else 
-                    {
-                        await message.member.send('Vous n\'avez pas la permission d\'exécuter cette commande.');
-                    }
-                    if (message.deletable) { await message.delete(); }
-                }
-                catch (e) 
-                {
-                    LOGGER_ALL.warn('An exception occured while trying to reset channels');
-                    LOGGER_ERROR.error(e);
-                }
-                
+                await this.executeResetCommand(message);
             }
             else if (message.content === 'b!debug')
             {
-                try
-                {
-                    if (message.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR))
-                    {
-                        let response = 'I do know about the following channels: \n'; 
-                        response += this.controller.getDebugMessage();
-                        await message.channel.send(response)
-                    }
-                    else 
-                    {
-                        await message.member.send('Vous n\'avez pas la permission d\'exécuter cette commande.');
-                    }
-                    if (message.deletable) { await message.delete(); }
-                }
-                catch (e) 
-                {
-                    LOGGER_ALL.warn('An exception occured while trying to debug channels');
-                    LOGGER_ERROR.error(e);
-                }
+                await this.executeDebugCommand(message);
             }
         }
     }
@@ -121,6 +150,5 @@ export class BumjuBot
     public run (): void 
     {
         this.login();
-        LOGGER_ALL.log('Started server');
     }
 }

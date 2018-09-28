@@ -3,6 +3,7 @@ import * as Log4js      from 'log4js';
 import { TextChannel }  from 'discord.js';
 
 const ERROR_LOGGER = Log4js.getLogger('error');
+const OUT_LOGGER    = Log4js.getLogger('out');
 
 const CHANNEL_PERMISSIONS_IN =
 {
@@ -28,6 +29,7 @@ export class MergedChannel
         {
             try
             {
+                OUT_LOGGER.info(`Creating text channel for ${this.voiceChannel.name}`);
                 this.textChannel = (await guild.createChannel(`TEXT-${this.voiceChannel.name.replace(/'/g, '-')}`, 'text',
                 [
                     {
@@ -36,6 +38,7 @@ export class MergedChannel
                             Discord.Permissions.ALL
                     }
                 ])) as TextChannel;
+                OUT_LOGGER.info(`Setting category for text channel ${this.textChannel.name}`);
                await this.textChannel.setParent(this.voiceChannel.parent);
             }
             catch (e)
@@ -52,6 +55,7 @@ export class MergedChannel
         {
             try
             {
+                OUT_LOGGER.info(`Adding permissions for channel [${this.textChannel.name}] to ${member.displayName}`)
                 await this.textChannel.overwritePermissions(member, CHANNEL_PERMISSIONS_IN, 'BUMJU');
             }
             catch (e)
@@ -67,6 +71,7 @@ export class MergedChannel
         {
             try
             {
+                OUT_LOGGER.info(`Removing permissions for channel [${this.textChannel.name}] from ${member.displayName}`)
                 let permissions = this.textChannel.permissionOverwrites.get(member.id);
                 if (permissions != null)
                 {
@@ -87,6 +92,7 @@ export class MergedChannel
         {
             try
             {
+                OUT_LOGGER.info(`Deleting text channel : ${this.textChannel.name}`);
                 await this.textChannel.delete();
             }
             catch (exception)
